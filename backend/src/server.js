@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import { env } from "./config/env.js";
 import { connectDB } from "./config/db.js";
@@ -12,7 +13,10 @@ app.use(
     origin: env.corsOrigins,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
+
+// Serve uploaded blog images as static files.
+app.use("/uploads", express.static(path.resolve("uploads")));
 
 // Health check — useful for uptime checks / deploy verification.
 app.get("/health", (req, res) => {

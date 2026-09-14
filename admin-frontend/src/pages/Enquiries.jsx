@@ -17,6 +17,8 @@ export default function Enquiries() {
   const [selected, setSelected] = useState(null);
   const [messageEnquiry, setMessageEnquiry] = useState(null);
   const [exporting, setExporting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -71,11 +73,28 @@ export default function Enquiries() {
     load();
   }
 
-  async function handleDelete(enquiry) {
-    if (!selected && !window.confirm(`Delete the enquiry from "${enquiry.name}" permanently?`)) return;
-    await api.deleteEnquiry(enquiry._id);
-    setSelected(null);
-    load();
+  function handleDelete(enquiry) {
+    setDeleteTarget(enquiry);
+  }
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+
+    setDeleting(true);
+
+    try {
+      await api.deleteEnquiry(deleteTarget._id);
+
+      if (selected?._id === deleteTarget._id) {
+        setSelected(null);
+      }
+
+      setDeleteTarget(null);
+      load();
+    } catch (err) {
+      setError(err.message || "Failed to delete enquiry.");
+    } finally {
+      setDeleting(false);
+    }
   }
 
   async function fetchAllMatching() {
@@ -131,7 +150,63 @@ export default function Enquiries() {
       )}
 
       {messageEnquiry && (
-        <EnquiryMessageModal enquiry={messageEnquiry} onClose={() => setMessageEnquiry(null)} />
+        <EnquiryMessageModal
+          enquiry={messageEnquiry}
+          onClose={() => setMessageEnquiry(null)}
+        />
+      )}
+
+      {deleteTarget && (
+        <div
+          className="delete-modal-overlay"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !deleting) {
+              setDeleteTarget(null);
+            }
+          }}
+        >
+          <div
+            className="delete-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-enquiry-title"
+          >
+            <div className="delete-modal__icon">
+              !
+            </div>
+
+            <h2 id="delete-enquiry-title">
+              Delete enquiry?
+            </h2>
+
+            <p>
+              Are you sure you want to delete the enquiry from{" "}
+              <strong>{deleteTarget.name}</strong>?
+              <br />
+              This action cannot be undone.
+            </p>
+
+            <div className="delete-modal__actions">
+              <button
+                type="button"
+                className="btn btn--ghost"
+                disabled={deleting}
+                onClick={() => setDeleteTarget(null)}
+              >
+                Discard
+              </button>
+
+              <button
+                type="button"
+                className="btn btn--danger"
+                disabled={deleting}
+                onClick={confirmDelete}
+              >
+                {deleting ? "Deleting…" : "Confirm delete"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

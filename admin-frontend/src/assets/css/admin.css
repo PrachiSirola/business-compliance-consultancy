@@ -193,6 +193,14 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.88rem}
 /* ----- Modal / drawer ------------------------------------------------------*/
 .modal-overlay{position:fixed;inset:0;background:rgba(20,32,58,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:100;overflow-y:auto}
 .modal{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:560px;padding:28px}
+.delete-modal-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(20,32,58,.48);backdrop-filter:blur(3px)}
+.delete-modal{width:100%;max-width:420px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:30px;text-align:center}
+.delete-modal__icon{width:44px;height:44px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#FBEAE7;border:1px solid #EBC6BC;color:var(--danger);font-size:1.2rem;font-weight:700}
+.delete-modal h2{margin:0 0 8px;font-size:1.45rem;color:var(--ink)}
+.delete-modal p{margin:0;color:var(--stone);font-size:.92rem;line-height:1.6}
+.delete-modal p strong{color:var(--ink)}
+.delete-modal__actions{display:flex;justify-content:center;gap:10px;margin-top:24px}
+.delete-modal__actions .btn{min-width:110px;justify-content:center}
 .modal__head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
 .modal__close{background:none;border:none;cursor:pointer;padding:6px;border-radius:8px}
 .modal__close:hover{background:var(--ivory-2)}
@@ -227,4 +235,49 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.88rem}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   .page{padding:16px}
   .topbar{padding:0 16px}
+}
+
+/* ── Blog editor layout ─────────────────────────────────── */
+.be-grid{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+.be-main{display:flex;flex-direction:column;gap:6px}
+.be-side{display:flex;flex-direction:column;gap:16px}
+.be-card{background:var(--ivory-2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:6px}
+.be-label{font-size:.78rem;font-weight:600;color:var(--stone);letter-spacing:.02em;margin-top:8px}
+.input{display:block;width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius);font-size:.92rem;font-family:var(--font-body);background:var(--white);color:var(--ink);transition:border-color .15s}
+.input:focus{outline:none;border-color:var(--navy)}
+select.input{appearance:auto}
+textarea.input{resize:vertical}
+
+/* ── TipTap editor ──────────────────────────────────────── */
+.te-wrap{border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--white)}
+.te-toolbar{display:flex;flex-wrap:wrap;gap:2px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--ivory-2)}
+.te-btn{background:none;border:1px solid transparent;border-radius:6px;padding:5px 10px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--ink)}
+.te-btn:hover{background:rgba(30,42,68,.06)}
+.te-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.te-sep{width:1px;background:var(--line);align-self:stretch;margin:0 4px}
+.te-content .tiptap{padding:16px 18px;min-height:320px;outline:none;font-size:.96rem;line-height:1.7;color:var(--ink)}
+.te-content .tiptap p{margin:0 0 .8em}
+.te-content .tiptap h2{font-size:1.3rem;margin:1.2em 0 .4em;font-weight:600}
+.te-content .tiptap h3{font-size:1.12rem;margin:1em 0 .3em;font-weight:600}
+.te-content .tiptap ul,.te-content .tiptap ol{padding-left:1.4em;margin:.4em 0}
+.te-content .tiptap blockquote{border-left:3px solid var(--line-strong);padding-left:14px;margin:1em 0;color:var(--stone)}
+.te-content .tiptap img{max-width:100%;height:auto;border-radius:8px;margin:1em 0}
+.te-content .tiptap a{color:var(--navy);text-decoration:underline}
+.te-content .tiptap .is-editor-empty:first-child::before{content:attr(data-placeholder);color:var(--stone);float:left;height:0;pointer-events:none}
+
+/* ── Table (shared for blogs + categories) ──────────────── */
+.table-wrap{overflow-x:auto}
+.table{width:100%;border-collapse:collapse}
+.table th{text-align:left;padding:10px 14px;font-size:.76rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);border-bottom:2px solid var(--line)}
+.table td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:.92rem;vertical-align:middle}
+.table tr:hover td{background:var(--ivory-2)}
+.link{color:var(--navy);font-weight:500}
+.link:hover{text-decoration:underline}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:600;text-transform:capitalize}
+.badge--success{background:#daf5e4;color:#1a7a3a}
+.badge--muted{background:#eee;color:#777}
+.muted{color:var(--stone)}
+
+@media (max-width:800px){
+  .be-grid{grid-template-columns:1fr}
 }

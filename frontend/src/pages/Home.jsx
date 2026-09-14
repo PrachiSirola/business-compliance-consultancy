@@ -113,9 +113,11 @@ export default function Home() {
           site's normal 1160px container, which every other section keeps). */}
       <section className="section">
         <div className="container container--wide">
-          <Reveal className="center" style={{ maxWidth: 640, marginInline: "auto" }}>
+          <Reveal className="center" style={{ maxWidth: 1200, marginInline: "auto" }}>
             <p className="eyebrow">What we do</p>
+
             <h2>Everything a growing company needs, under one roof</h2>
+
             <p className="lead" style={{ marginInline: "auto" }}>
               From incorporation to FEMA filings and trademarks — organised into five clear areas.
             </p>

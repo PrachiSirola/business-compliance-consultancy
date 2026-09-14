@@ -3,6 +3,8 @@ import chatRoutes from "./chat.js";
 import authRoutes from "./auth.js";
 import enquiryRoutes from "./enquiries.js";
 import adminRoutes from "./admin.js";
+import blogRoutes from "./blog.js";
+import uploadRoutes from "./upload.js";
 
 const router = Router();
 
@@ -17,5 +19,11 @@ router.use("/enquiries", enquiryRoutes);
 
 // Admin-only enquiry management + dashboard stats.
 router.use("/admin", adminRoutes);
+
+// Public blog.
+router.use("/blog", blogRoutes);
+
+// Image upload (admin only — auth checked inside the route).
+router.use("/upload", uploadRoutes);
 
 export default router;

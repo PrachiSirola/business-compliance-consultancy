@@ -1,9 +1,56 @@
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import SEO from "../components/common/SEO";
 import Reveal from "../components/common/Reveal";
 import PostCard from "../components/sections/PostCard";
+import { API_BASE } from "../lib/api";
 
 export default function Blog() {
+  const [blogs, setBlogs] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const [searchInput, setSearchInput] = useState("");
+
+  // Debounce search input
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  // Fetch blogs
+  const fetchBlogs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams(
+        Object.fromEntries(
+          Object.entries({ search,limit: 12 }).filter(
+            ([, v]) => v !== undefined && v !== ""
+          )
+        )
+      );
+      const res = await fetch(`${API_BASE}/api/blog?${params}`);
+      const data = await res.json();
+      setBlogs(data.blogs || []);
+      setTotal(data.total || 0);
+      setPages(data.pages || 1);
+    } catch {
+      setBlogs([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [search, page]);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, [fetchBlogs]);
+
   return (
     <>
       <SEO
@@ -12,12 +59,11 @@ export default function Blog() {
       />
 
       {/* =====================================================
-          BLOG HERO
+          BLOG HERO  (unchanged from original design)
           ===================================================== */}
       <section className="blog-hero">
         <div className="blog-hero__inner">
           <Reveal className="blog-hero__content">
-
             <p className="blog-hero__breadcrumb">
               <Link to="/">Home</Link>
               <span>/</span>
@@ -34,7 +80,6 @@ export default function Blog() {
               Practical, plain-English guides to keep you ahead of
               compliance. New articles added regularly.
             </p>
-
           </Reveal>
         </div>
       </section>
@@ -45,7 +90,7 @@ export default function Blog() {
       <section className="blog-content">
         <div className="container">
 
-          {/* Search only — category filters removed */}
+          {/* Search + category filter */}
           <Reveal className="blog-toolbar">
             <div className="blog-search">
               <svg
@@ -61,102 +106,59 @@ export default function Blog() {
               <input
                 type="text"
                 placeholder="Search articles, topics..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
               />
             </div>
           </Reveal>
 
-          <Reveal className="grid grid--3 blog-post-grid">
+          {loading ? (
+            <p style={{ textAlign: "center", padding: "40px 0", color: "var(--stone)" }}>
+              Loading articles…
+            </p>
+          ) : blogs.length === 0 ? (
+            <p style={{ textAlign: "center", padding: "40px 0", color: "var(--stone)" }}>
+              No articles found.
+            </p>
+          ) : (
+            <Reveal className="grid grid--3 blog-post-grid">
+              {blogs.map((b) => (
+                <PostCard
+                  key={b._id}
+                  to={`/blog/${b.slug}`}
+                  category={b.category}
+                  title={b.title}
+                  meta={b.readTime || ""}
+                  image={b.featuredImage}
+                >
+                  {b.excerpt}
+                </PostCard>
+              ))}
+            </Reveal>
+          )}
 
-            <PostCard
-              to="/blog/annual-compliance-calendar"
-              category="Compliance calendars"
-              title="The annual compliance calendar for a private limited company"
-              meta="6 min read"
-            >
-              The filings every private limited company should plan for
-              through the year.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="Compliance calendars"
-              title="LLP annual filings: what's due and when"
-              meta="Coming soon"
-            >
-              Form 8 and Form 11, explained simply — with a checklist.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="FEMA / FDI"
-              title="FDI into India, explained: a founder's plain-English guide"
-              meta="Coming soon"
-            >
-              How foreign investment works, and what it means for your
-              company.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="FEMA / FDI"
-              title="FC-GPR vs FC-TRS: which filing do you need, and when?"
-              meta="Coming soon"
-            >
-              The two most common FEMA equity filings, side by side.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="FEMA / FDI"
-              title="Setting up in India as a foreign company"
-              meta="Coming soon"
-            >
-              Branch vs subsidiary vs liaison office — which fits your
-              plans.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="Trademark"
-              title="How to register a trademark in India, step by step"
-              meta="Coming soon"
-            >
-              From search to registration — the full journey, demystified.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="Trademark"
-              title="Got a trademark objection? Here's what to do"
-              meta="Coming soon"
-            >
-              What an objection means and how to respond effectively.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="Startup guides"
-              title="Private Limited vs LLP vs OPC: choosing a structure"
-              meta="Coming soon"
-            >
-              Pick the right entity for how you plan to grow.
-            </PostCard>
-
-            <PostCard
-              to="/contact"
-              category="MCA updates"
-              title="Director KYC (DIR-3 KYC): who must file and how"
-              meta="Coming soon"
-            >
-              Keep your directors compliant and avoid deactivation.
-            </PostCard>
-
-          </Reveal>
-
-          <p className="blog-note">
-            Topics shown are the launch line-up — full articles are being
-            written and published progressively.
-          </p>
+          {/* Pagination */}
+          {pages > 1 && (
+            <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 28 }}>
+              <button
+                className="btn btn--ghost"
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+              >
+                ← Newer
+              </button>
+              <span style={{ padding: "10px 6px", fontSize: ".9rem", color: "var(--stone)" }}>
+                {page} / {pages}
+              </span>
+              <button
+                className="btn btn--ghost"
+                disabled={page >= pages}
+                onClick={() => setPage(page + 1)}
+              >
+                Older →
+              </button>
+            </div>
+          )}
 
         </div>
       </section>

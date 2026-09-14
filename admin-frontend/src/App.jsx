@@ -7,6 +7,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Overview from "./pages/Overview";
 import Enquiries from "./pages/Enquiries";
+import Blogs from "./pages/Blogs";
+import BlogEditor from "./pages/BlogEditor";
+import Categories from "./pages/Categories";
 
 export default function App() {
   return (
@@ -25,6 +28,10 @@ export default function App() {
           >
             <Route index element={<Overview />} />
             <Route path="enquiries" element={<Enquiries />} />
+            <Route path="blogs" element={<Blogs />} />
+            <Route path="blogs/new" element={<BlogEditor />} />
+            <Route path="blogs/:id/edit" element={<BlogEditor />} />
+            <Route path="categories" element={<Categories />} />
           </Route>
         </Routes>
       </BrowserRouter>

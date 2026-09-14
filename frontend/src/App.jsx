@@ -14,7 +14,7 @@ import TrademarkLegalDrafting from "./pages/TrademarkLegalDrafting";
 import Trademark from "./pages/Trademark";
 import LegalDrafting from "./pages/LegalDrafting";
 import Blog from "./pages/Blog";
-import BlogAnnualComplianceCalendar from "./pages/BlogAnnualComplianceCalendar";
+import BlogArticle from "./pages/BlogArticle";
 import Faq from "./pages/Faq";
 import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
@@ -40,7 +40,7 @@ export default function App() {
           <Route path="trademark" element={<Trademark />} />
           <Route path="legal-drafting" element={<LegalDrafting />} />
           <Route path="blog" element={<Blog />} />
-          <Route path="blog/annual-compliance-calendar" element={<BlogAnnualComplianceCalendar />} />
+          <Route path="blog/:slug" element={<BlogArticle />} />
           <Route path="faq" element={<Faq />} />
           <Route path="testimonials" element={<Testimonials />} />
           <Route path="contact" element={<Contact />} />

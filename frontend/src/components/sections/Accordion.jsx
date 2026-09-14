@@ -5,11 +5,16 @@ export function Accordion({ children }) {
 }
 
 /**
- * A single FAQ row. Each item toggles independently (matches the original
- * initAccordion(), which never closes sibling items), animating open/closed
- * via max-height, same as the original inline style manipulation.
+ * A single FAQ row, rendered as a bordered/shadowed card. Each item toggles
+ * independently (matches the original initAccordion(), which never closes
+ * sibling items), animating open/closed via max-height, same as the
+ * original inline style manipulation.
+ *
+ * `no` is an optional number label (e.g. "01") rendered as a small badge
+ * before the question — used to give the list continuous numbering across
+ * multiple <Accordion> groups on the page (see Faq.jsx).
  */
-export function AccordionItem({ question, children }) {
+export function AccordionItem({ no, question, children }) {
   const [open, setOpen] = useState(false);
   const ansRef = useRef(null);
 
@@ -18,7 +23,8 @@ export function AccordionItem({ question, children }) {
   return (
     <div className={"acc__item" + (open ? " open" : "")}>
       <button className="acc__q" aria-expanded={open} onClick={toggle}>
-        {question}
+        {no && <span className="acc__no">{no}</span>}
+        <span className="acc__q-text">{question}</span>
       </button>
       <div
         className="acc__a"

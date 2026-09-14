@@ -74,4 +74,41 @@ export const api = {
   updateEnquiry: (id, body) => request(`/api/admin/enquiries/${id}`, { method: "PATCH", body }),
   addNote: (id, text) => request(`/api/admin/enquiries/${id}/notes`, { method: "POST", body: { text } }),
   deleteEnquiry: (id) => request(`/api/admin/enquiries/${id}`, { method: "DELETE" }),
+
+  // ── Blog ──
+  listBlogs: (params) => {
+    const qs = new URLSearchParams(
+      Object.fromEntries(Object.entries(params || {}).filter(([, v]) => v !== undefined && v !== ""))
+    ).toString();
+    return request(`/api/admin/blogs${qs ? `?${qs}` : ""}`);
+  },
+  getBlog: (id) => request(`/api/admin/blogs/${id}`),
+  createBlog: (body) => request("/api/admin/blogs", { method: "POST", body }),
+  updateBlog: (id, body) => request(`/api/admin/blogs/${id}`, { method: "PATCH", body }),
+  deleteBlog: (id) => request(`/api/admin/blogs/${id}`, { method: "DELETE" }),
+
+  // ── Categories ──
+  listCategories: () => request("/api/admin/categories"),
+  createCategory: (name) => request("/api/admin/categories", { method: "POST", body: { name } }),
+  updateCategory: (id, name) =>
+    request(`/api/admin/categories/${id}`, { method: "PATCH", body: { name } }),
+  deleteCategory: (id) => request(`/api/admin/categories/${id}`, { method: "DELETE" }),
+
+  // ── Upload ──
+  uploadImage: async (file) => {
+    const form = new FormData();
+    form.append("image", file);
+    const headers = {};
+    const token = getToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const res = await fetch(`${API_BASE}/api/upload`, { method: "POST", headers, body: form });
+    if (res.status === 401) {
+      clearToken();
+      if (typeof window !== "undefined") window.location.href = "/login";
+      throw new Error("Session expired");
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Upload failed");
+    return data;
+  },
 };
